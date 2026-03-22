@@ -1,0 +1,65 @@
+---
+name: stale
+
+on:
+  schedule:
+    - cron: "30 1 * * 6"
+  workflow_dispatch:
+
+permissions: {}
+
+jobs:
+  mark-stale:
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+      pull-requests: write
+
+    env:
+      STALE_LABEL: stale
+      EXEMPT_ISSUE_LABELS: "help-wanted,good-first-issue,keep-open,wontfix"
+      EXEMPT_PR_LABELS: "help-wanted,keep-open,wontfix"
+      DAYS_BEFORE_ISSUE_STALE: "60"
+      DAYS_BEFORE_ISSUE_CLOSE: "14"
+      DAYS_BEFORE_PR_STALE: "30"
+      DAYS_BEFORE_PR_CLOSE: "-1"
+      OPERATIONS_PER_RUN: "200"
+
+    steps:
+      - name: Mark stale issues and pull requests
+        uses: actions/stale@b5d41d4e1d5dceea10e7104786b73624c18a190f # v10.2.0
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+
+          stale-issue-label: ${{ env.STALE_LABEL }}
+          stale-pr-label: ${{ env.STALE_LABEL }}
+          exempt-issue-labels: ${{ env.EXEMPT_ISSUE_LABELS }}
+          exempt-pr-labels: ${{ env.EXEMPT_PR_LABELS }}
+
+          days-before-issue-stale: ${{ env.DAYS_BEFORE_ISSUE_STALE }}
+          days-before-issue-close: ${{ env.DAYS_BEFORE_ISSUE_CLOSE }}
+          days-before-pr-stale: ${{ env.DAYS_BEFORE_PR_STALE }}
+          days-before-pr-close: ${{ env.DAYS_BEFORE_PR_CLOSE }}
+
+          stale-issue-message: >
+            Thank you for your contribution! This issue has been automatically
+            marked as `stale` because it has no recent activity in the last ${{
+            env.DAYS_BEFORE_ISSUE_STALE }} days. It will be closed in ${{
+            env.DAYS_BEFORE_ISSUE_CLOSE }} days if no further activity occurs.
+            If this issue is still relevant, please leave a comment to let us
+            know, and the `stale` label will be automatically removed.
+          close-issue-message: >
+            This issue has been marked `stale` for ${{
+            env.DAYS_BEFORE_ISSUE_CLOSE }} days, and is now closed due to
+            inactivity. If the issue is still relevant, please re-open this
+            issue or file a new one. Thank you!
+          stale-pr-message: >
+            Thank you for your contribution! This PR has been automatically
+            marked as `stale` because it has no recent activity in the last ${{
+            env.DAYS_BEFORE_PR_STALE }} days. If this pull request is still
+            relevant, please leave a comment to let us know, and the `stale`
+            label will be automatically removed.
+
+          exempt-draft-pr: true
+          remove-stale-when-updated: true
+          operations-per-run: ${{ env.OPERATIONS_PER_RUN }}

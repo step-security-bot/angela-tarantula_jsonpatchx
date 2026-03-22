@@ -1,0 +1,28 @@
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+
+# Tests / Coverage
+.coverage
+
+# Local fuzzing artifacts (libFuzzer/Atheris)
+crash-*
+leak-*
+timeout-*
+oom-*
+slow-unit-*
+# Generated libFuzzer corpus entries (keep only curated seed_* files in repo)
+fuzzers/corpus/**/[0-9a-f][0-9a-f][0-9a-f][0-9a-f]*
+
+# Virtual environments
+.venv
+
+# draft files
+*temp_*
+*temp.*
+*draft*
+tmp/**

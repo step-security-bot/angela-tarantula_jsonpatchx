@@ -1,0 +1,6 @@
+ERROR: ld.so: object '/github/workspace/build-out/sanitizer_with_fuzzer.so' from LD_PRELOAD cannot be preloaded (cannot open shared object file): ignored.
+ERROR: ld.so: object '/github/workspace/build-out/sanitizer_with_fuzzer.so' from LD_PRELOAD cannot be preloaded (cannot open shared object file): ignored.
+Traceback (most recent call last):
+  File "jsonpatchx_fuzzer.py", line 3, in <module>
+ModuleNotFoundError: No module named 'coverage'
+[PYI-106:ERROR] Failed to execute script 'jsonpatchx_fuzzer' due to unhandled exception!

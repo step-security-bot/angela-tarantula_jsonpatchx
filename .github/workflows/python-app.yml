@@ -1,0 +1,82 @@
+---
+# Purpose: Python-only CI (ruff, ruff format, mypy, pytest, coverage comment).
+# Non-Python lint/security/docs checks run in .github/workflows/lint.yml.
+name: Python CI
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.12", "3.13", "3.14"]
+
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
+          submodules: recursive
+
+      - name: Setup uv
+        uses: astral-sh/setup-uv@37802adc94f370d6bfd71619e3f0bf239e1f3b78 # v7.6.0
+        with:
+          python-version: ${{ matrix.python-version }}
+          enable-cache: true
+          cache-dependency-glob: |
+            pyproject.toml
+            uv.lock
+
+      - name: Install Dependencies
+        run: uv sync
+
+      - name: Ruff
+        run: uv run ruff check
+
+      - name: Ruff format
+        run: uv run ruff format --check .
+
+      - name: Mypy
+        run: uv run mypy --python-version "${{ matrix.python-version }}" .
+
+      - name: Test
+        run: |
+          set -o pipefail
+          uv run pytest -o addopts="" \
+            --junitxml=pytest.xml \
+            --cov=jsonpatchx \
+            --cov-report=term-missing:skip-covered \
+            -vv | tee pytest-coverage.txt
+
+      - name: Coverage Comment (PRs only)
+        if: github.event_name == 'pull_request'
+        uses: MishaKav/pytest-coverage-comment@287292879eaaff04116f36d3eb1a670f6e5df1a4 # v1.7.1
+        with:
+          pytest-coverage-path: ./pytest-coverage.txt
+          junitxml-path: ./pytest.xml
+          unique-id-for-comment: ${{ matrix.python-version }}
+          title: Coverage for Python ${{ matrix.python-version }}
+
+  # https://github.com/marketplace/actions/alls-green#why
+  # For branch protection
+  python-check:
+    if: always()
+    needs:
+      - build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Decide whether the needed jobs succeeded or failed
+        uses: re-actors/alls-green@05ac9388f0aebcb5727afa17fcccfecd6f8ec5fe # v1.2.2
+        with:
+          jobs: ${{ toJSON(needs) }}

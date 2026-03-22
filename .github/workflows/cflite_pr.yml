@@ -1,0 +1,63 @@
+---
+# Purpose: Run ClusterFuzzLite on pull requests to fuzz core patch/pointer paths.
+name: clusterfuzzlite PR
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths-ignore:
+      - "**/*.md"
+      - "docs/**"
+      - ".github/ISSUE_TEMPLATE/**"
+      - "site/**"
+  workflow_dispatch:
+
+permissions: read-all
+
+jobs:
+  fuzz-code-changes:
+    runs-on: ubuntu-latest
+    concurrency:
+      group:
+        cflite-pr-${{ github.event.pull_request.head.repo.full_name ||
+        github.repository }}-${{ github.head_ref || github.ref_name }}
+      cancel-in-progress: true
+    permissions:
+      security-events: write
+    steps:
+      - name: 🔒 harden runner
+        uses: step-security/harden-runner@fa2e9d605c4eeb9fcad4c99c224cee0c6c7f3594 # v2.16.0
+        with:
+          egress-policy: audit
+
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
+
+      - name: Build fuzzers
+        uses: google/clusterfuzzlite/actions/build_fuzzers@884713a6c30a92e5e8544c39945cd7cb630abcd1 # v1
+        with:
+          language: python
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          sanitizer: address
+          keep-unaffected-fuzz-targets: false
+          storage-repo:
+            https://${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository
+            }}.git
+          storage-repo-branch: gh-pages
+          storage-repo-branch-coverage: gh-pages
+
+      - name: Run fuzzers (changed code)
+        uses: google/clusterfuzzlite/actions/run_fuzzers@884713a6c30a92e5e8544c39945cd7cb630abcd1 # v1
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          language: python
+          sanitizer: address
+          mode: code-change
+          fuzz-seconds: 300
+          storage-repo:
+            https://${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository
+            }}.git
+          storage-repo-branch: gh-pages
+          storage-repo-branch-coverage: gh-pages

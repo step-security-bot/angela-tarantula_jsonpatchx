@@ -1,0 +1,8 @@
+---
+skip-check:
+  # Demo and snapshot OpenAPI specs intentionally omit global auth requirements.
+  - CKV_OPENAPI_4
+  # Demo endpoints intentionally do not define per-operation auth requirements.
+  - CKV_OPENAPI_5
+  # JSON Patch request arrays are intentionally unbounded; maxItems is not enforced.
+  - CKV_OPENAPI_21

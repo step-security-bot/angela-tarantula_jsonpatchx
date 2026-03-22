@@ -1,0 +1,40 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "type-check",
+      "type": "shell",
+      "command": "bash",
+      "args": ["-c", "uv run ruff check && uv run mypy ."],
+      "group": "test",
+      "problemMatcher": []
+    },
+    {
+      "label": "format",
+      "type": "shell",
+      "command": "bash",
+      "args": [
+        "-c",
+        "uv run ruff check --fix --select I && uv run ruff format"
+      ],
+      "group": "build",
+      "problemMatcher": []
+    },
+    {
+      "label": "pytest",
+      "type": "shell",
+      "command": "uv",
+      "args": ["run", "pytest", "-v"],
+      "group": "test",
+      "problemMatcher": []
+    },
+    {
+      "label": "update-openapi-snapshots",
+      "type": "shell",
+      "command": "uv",
+      "args": ["run", "python", "scripts/update_openapi_snapshots.py"],
+      "group": "build",
+      "problemMatcher": []
+    }
+  ]
+}

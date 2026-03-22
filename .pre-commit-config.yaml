@@ -1,0 +1,120 @@
+---
+minimum_pre_commit_version: "3.7.0"
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v6.0.0
+    hooks:
+      - id: check-merge-conflict
+      - id: check-json
+      - id: check-yaml
+
+  - repo: https://github.com/rhysd/actionlint
+    rev: v1.7.11
+    hooks:
+      - id: actionlint
+        files: ^\.github/(workflows|actions)/.*\.ya?ml$
+
+  - repo: https://github.com/zizmorcore/zizmor-pre-commit
+    rev: v1.23.1
+    hooks:
+      - id: zizmor
+        files: ^\.github/(workflows|actions)/.*\.ya?ml$
+
+  - repo: https://github.com/gitleaks/gitleaks
+    rev: v8.30.1
+    hooks:
+      - id: gitleaks
+
+  - repo: https://github.com/igorshubovych/markdownlint-cli
+    rev: v0.48.0
+    hooks:
+      - id: markdownlint
+        args: [--config, .github/linters/.markdownlint.yml, --fix]
+
+  - repo: https://github.com/adrienverge/yamllint.git
+    rev: v1.38.0
+    hooks:
+      - id: yamllint
+        args: [-c, .github/linters/.yamllint.yml]
+
+  - repo: https://github.com/codespell-project/codespell
+    rev: v2.4.2
+    hooks:
+      - id: codespell
+
+  - repo: local
+    hooks:
+      - id: ruff
+        name: ruff
+        entry: uv run ruff check
+        language: system
+        types: [python]
+
+      - id: ruff-format
+        name: ruff format
+        entry: uv run ruff format
+        language: system
+        types: [python]
+
+      - id: mypy
+        name: mypy
+        entry: uv run mypy .
+        language: system
+        pass_filenames: false
+
+      - id: update-openapi-snapshots
+        name: update openapi snapshots
+        entry: uv run python scripts/update_openapi_snapshots.py
+        language: system
+        pass_filenames: false
+
+      - id: checkov
+        name: checkov
+        entry:
+          uv tool run --python 3.13 checkov --config-file
+          .github/linters/.checkov.yaml --directory .
+        language: system
+        pass_filenames: false
+
+      - id: jscpd
+        name: jscpd
+        entry: npx --yes jscpd --config .github/linters/.jscpd.json
+        language: system
+        pass_filenames: false
+
+      - id: json-prettier
+        name: json prettier
+        entry:
+          npx --yes prettier --write --config .github/linters/.prettierrc.json
+        language: system
+        files: \.json$
+
+      - id: markdown-prettier
+        name: markdown prettier
+        entry:
+          npx --yes prettier --write --config .github/linters/.prettierrc.json
+        language: system
+        files: \.(md|markdown)$
+
+      - id: yaml-prettier
+        name: yaml prettier
+        entry:
+          npx --yes prettier --write --config .github/linters/.prettierrc.json
+        language: system
+        files: \.ya?ml$
+
+      - id: natural-language
+        name: natural language (textlint terminology)
+        entry:
+          npx --yes --package textlint --package textlint-rule-terminology
+          textlint --rule terminology
+        language: system
+        files: \.(md|markdown)$
+
+      - id: openapi
+        name: openapi (spectral)
+        entry:
+          npx --yes @stoplight/spectral-cli lint --ruleset
+          .github/linters/.openapirc.yml
+        language: system
+        files: ^tests/integration/fastapi_tests/snapshots/.*\.json$

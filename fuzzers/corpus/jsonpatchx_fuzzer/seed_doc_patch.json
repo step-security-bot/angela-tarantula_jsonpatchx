@@ -1,0 +1,7 @@
+{
+  "doc": { "root": { "value": 1 }, "arr": [0, 1, 2], "enabled": true },
+  "patch": [
+    { "op": "replace", "path": "/root/value", "value": 2 },
+    { "op": "add", "path": "/arr/-", "value": 3 }
+  ]
+}

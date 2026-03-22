@@ -1,0 +1,625 @@
+{
+  "components": {
+    "schemas": {
+      "AddOp": {
+        "additionalProperties": true,
+        "description": "RFC 6902 add operation.",
+        "properties": {
+          "op": {
+            "const": "add",
+            "default": "add",
+            "description": "The operation to perform.",
+            "title": "Op",
+            "type": "string"
+          },
+          "path": {
+            "description": "JSON Pointer (RFC 6901) string",
+            "format": "json-pointer",
+            "title": "Path",
+            "type": "string",
+            "x-pointer-type-schema": {}
+          },
+          "value": {
+            "title": "Value"
+          }
+        },
+        "required": ["op", "path", "value"],
+        "title": "Add operation",
+        "type": "object"
+      },
+      "Apprentice": {
+        "properties": {
+          "id": {
+            "title": "Id",
+            "type": "integer"
+          },
+          "mana": {
+            "default": 0,
+            "title": "Mana",
+            "type": "integer"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "rank": {
+            "default": "novice",
+            "title": "Rank",
+            "type": "string"
+          },
+          "sigils": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Sigils",
+            "type": "array"
+          }
+        },
+        "required": ["id", "name"],
+        "title": "Apprentice",
+        "type": "object"
+      },
+      "ApprenticeId": {
+        "enum": [1, 2],
+        "title": "ApprenticeId",
+        "type": "integer"
+      },
+      "ApprenticePatchOperation": {
+        "description": "Discriminated union of patch operations for Apprentice.",
+        "discriminator": {
+          "mapping": {
+            "add": "#/components/schemas/AddOp",
+            "copy": "#/components/schemas/CopyOp",
+            "generic_append": "#/components/schemas/GenericAppendOp_RunePointerV2_",
+            "generic_increment": "#/components/schemas/GenericIncrementOp_RunePointerV2_",
+            "move": "#/components/schemas/MoveOp",
+            "remove": "#/components/schemas/RemoveOp",
+            "replace": "#/components/schemas/ReplaceOp",
+            "test": "#/components/schemas/TestOp"
+          },
+          "propertyName": "op"
+        },
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/AddOp"
+          },
+          {
+            "$ref": "#/components/schemas/CopyOp"
+          },
+          {
+            "$ref": "#/components/schemas/GenericAppendOp_RunePointerV2_"
+          },
+          {
+            "$ref": "#/components/schemas/GenericIncrementOp_RunePointerV2_"
+          },
+          {
+            "$ref": "#/components/schemas/MoveOp"
+          },
+          {
+            "$ref": "#/components/schemas/RemoveOp"
+          },
+          {
+            "$ref": "#/components/schemas/ReplaceOp"
+          },
+          {
+            "$ref": "#/components/schemas/TestOp"
+          }
+        ],
+        "title": "Apprentice Patch Operation"
+      },
+      "ApprenticePatchRequest": {
+        "description": "Array of patch operations for Apprentice. Applied to model_dump() and re-validated against the model schema.",
+        "items": {
+          "$ref": "#/components/schemas/ApprenticePatchOperation"
+        },
+        "title": "Apprentice Patch Request",
+        "type": "array",
+        "x-target-model": "Apprentice"
+      },
+      "CopyOp": {
+        "additionalProperties": true,
+        "description": "RFC 6902 copy operation.",
+        "properties": {
+          "from": {
+            "description": "JSON Pointer (RFC 6901) string",
+            "format": "json-pointer",
+            "title": "From",
+            "type": "string",
+            "x-pointer-type-schema": {}
+          },
+          "op": {
+            "const": "copy",
+            "default": "copy",
+            "description": "The operation to perform.",
+            "title": "Op",
+            "type": "string"
+          },
+          "path": {
+            "description": "JSON Pointer (RFC 6901) string",
+            "format": "json-pointer",
+            "title": "Path",
+            "type": "string",
+            "x-pointer-type-schema": {}
+          }
+        },
+        "required": ["from", "op", "path"],
+        "title": "Copy operation",
+        "type": "object"
+      },
+      "GenericAppendOp_RunePointerV2_": {
+        "additionalProperties": true,
+        "description": "Appends a value to an array using a pointer backend generic type parameter.",
+        "properties": {
+          "op": {
+            "const": "generic_append",
+            "default": "generic_append",
+            "description": "The operation to perform.",
+            "title": "Op",
+            "type": "string"
+          },
+          "path": {
+            "description": "JSON Pointer string (custom backend syntax)",
+            "format": "x-json-pointer",
+            "title": "Path",
+            "type": "string",
+            "x-pointer-type-schema": {
+              "items": {},
+              "type": "array"
+            }
+          },
+          "value": {
+            "title": "Value"
+          }
+        },
+        "required": ["op", "path", "value"],
+        "title": "Append operation",
+        "type": "object"
+      },
+      "GenericIncrementOp_RunePointerV2_": {
+        "additionalProperties": true,
+        "description": "Increments a numeric field using a pointer backend generic type parameter.",
+        "properties": {
+          "op": {
+            "const": "generic_increment",
+            "default": "generic_increment",
+            "description": "The operation to perform.",
+            "title": "Op",
+            "type": "string"
+          },
+          "path": {
+            "description": "JSON Pointer string (custom backend syntax)",
+            "format": "x-json-pointer",
+            "title": "Path",
+            "type": "string",
+            "x-pointer-type-schema": {
+              "type": "number"
+            }
+          },
+          "value": {
+            "title": "Value",
+            "type": "number"
+          }
+        },
+        "required": ["op", "path", "value"],
+        "title": "Increment operation",
+        "type": "object"
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "title": "Detail",
+            "type": "array"
+          }
+        },
+        "title": "HTTPValidationError",
+        "type": "object"
+      },
+      "MoveOp": {
+        "additionalProperties": true,
+        "description": "RFC 6902 move operation.",
+        "properties": {
+          "from": {
+            "description": "JSON Pointer (RFC 6901) string",
+            "format": "json-pointer",
+            "title": "From",
+            "type": "string",
+            "x-pointer-type-schema": {}
+          },
+          "op": {
+            "const": "move",
+            "default": "move",
+            "description": "The operation to perform.",
+            "title": "Op",
+            "type": "string"
+          },
+          "path": {
+            "description": "JSON Pointer (RFC 6901) string",
+            "format": "json-pointer",
+            "title": "Path",
+            "type": "string",
+            "x-pointer-type-schema": {}
+          }
+        },
+        "required": ["from", "op", "path"],
+        "title": "Move operation",
+        "type": "object"
+      },
+      "RemoveOp": {
+        "additionalProperties": true,
+        "description": "RFC 6902 remove operation. Removal of the root sets it to null.",
+        "properties": {
+          "op": {
+            "const": "remove",
+            "default": "remove",
+            "description": "The operation to perform.",
+            "title": "Op",
+            "type": "string"
+          },
+          "path": {
+            "description": "JSON Pointer (RFC 6901) string",
+            "format": "json-pointer",
+            "title": "Path",
+            "type": "string",
+            "x-pointer-type-schema": {}
+          }
+        },
+        "required": ["op", "path"],
+        "title": "Remove operation",
+        "type": "object"
+      },
+      "ReplaceOp": {
+        "additionalProperties": true,
+        "description": "RFC 6902 replace operation.",
+        "properties": {
+          "op": {
+            "const": "replace",
+            "default": "replace",
+            "description": "The operation to perform.",
+            "title": "Op",
+            "type": "string"
+          },
+          "path": {
+            "description": "JSON Pointer (RFC 6901) string",
+            "format": "json-pointer",
+            "title": "Path",
+            "type": "string",
+            "x-pointer-type-schema": {}
+          },
+          "value": {
+            "title": "Value"
+          }
+        },
+        "required": ["op", "path", "value"],
+        "title": "Replace operation",
+        "type": "object"
+      },
+      "TestOp": {
+        "additionalProperties": true,
+        "description": "RFC 6902 test operation.",
+        "properties": {
+          "op": {
+            "const": "test",
+            "default": "test",
+            "description": "The operation to perform.",
+            "title": "Op",
+            "type": "string"
+          },
+          "path": {
+            "description": "JSON Pointer (RFC 6901) string",
+            "format": "json-pointer",
+            "title": "Path",
+            "type": "string",
+            "x-pointer-type-schema": {}
+          },
+          "value": {
+            "title": "Value"
+          }
+        },
+        "required": ["op", "path", "value"],
+        "title": "Test operation",
+        "type": "object"
+      },
+      "ValidationError": {
+        "properties": {
+          "ctx": {
+            "title": "Context",
+            "type": "object"
+          },
+          "input": {
+            "title": "Input"
+          },
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "title": "Location",
+            "type": "array"
+          },
+          "msg": {
+            "title": "Message",
+            "type": "string"
+          },
+          "type": {
+            "title": "Error Type",
+            "type": "string"
+          }
+        },
+        "required": ["loc", "msg", "type"],
+        "title": "ValidationError",
+        "type": "object"
+      }
+    }
+  },
+  "info": {
+    "description": "Rune-pointer operations authored as JSONPointer[..., P] where P is a backend TypeVar.",
+    "title": "Demo 6: Generic backend-parameterized ops",
+    "version": "0.1.0"
+  },
+  "openapi": "3.1.0",
+  "paths": {
+    "/apprentices/{apprentice_id}": {
+      "get": {
+        "description": "Fetch an apprentice by id.",
+        "operationId": "get_apprentice_endpoint_apprentices__apprentice_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "apprentice_id",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/ApprenticeId"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Apprentice"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get an apprentice",
+        "tags": ["apprentices"]
+      },
+      "patch": {
+        "description": "Apply ops authored with a generic pointer backend type parameter.",
+        "operationId": "patch_apprentice_apprentices__apprentice_id__patch",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "apprentice_id",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/ApprenticeId"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json-patch+json": {
+              "examples": {
+                "generic-runes": {
+                  "summary": "increment mana and append a sigil via ops generic in P",
+                  "value": [
+                    {
+                      "op": "generic_increment",
+                      "path": "mana",
+                      "value": 15
+                    },
+                    {
+                      "op": "generic_append",
+                      "path": "sigils",
+                      "value": "flare"
+                    }
+                  ]
+                }
+              },
+              "schema": {
+                "$ref": "#/components/schemas/ApprenticePatchRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Apprentice"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "detail": {
+                      "oneOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "properties": {
+                            "cause_type": {
+                              "type": ["string", "null"]
+                            },
+                            "index": {
+                              "type": "integer"
+                            },
+                            "message": {
+                              "type": "string"
+                            },
+                            "op": {
+                              "type": "object"
+                            }
+                          },
+                          "required": ["index", "op", "message"],
+                          "type": "object"
+                        }
+                      ]
+                    }
+                  },
+                  "required": ["detail"],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Patch cannot be applied to current resource state"
+          },
+          "415": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "detail": {
+                      "oneOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "properties": {
+                            "cause_type": {
+                              "type": ["string", "null"]
+                            },
+                            "index": {
+                              "type": "integer"
+                            },
+                            "message": {
+                              "type": "string"
+                            },
+                            "op": {
+                              "type": "object"
+                            }
+                          },
+                          "required": ["index", "op", "message"],
+                          "type": "object"
+                        }
+                      ]
+                    }
+                  },
+                  "required": ["detail"],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Unsupported Media Type"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "properties": {
+                        "detail": {
+                          "oneOf": [
+                            {
+                              "type": "string"
+                            },
+                            {
+                              "properties": {
+                                "cause_type": {
+                                  "type": ["string", "null"]
+                                },
+                                "index": {
+                                  "type": "integer"
+                                },
+                                "message": {
+                                  "type": "string"
+                                },
+                                "op": {
+                                  "type": "object"
+                                }
+                              },
+                              "required": ["index", "op", "message"],
+                              "type": "object"
+                            }
+                          ]
+                        }
+                      },
+                      "required": ["detail"],
+                      "type": "object"
+                    },
+                    {
+                      "$ref": "#/components/schemas/HTTPValidationError"
+                    }
+                  ]
+                }
+              }
+            },
+            "description": "Request validation or patch document validation error"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "detail": {
+                      "oneOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "properties": {
+                            "cause_type": {
+                              "type": ["string", "null"]
+                            },
+                            "index": {
+                              "type": "integer"
+                            },
+                            "message": {
+                              "type": "string"
+                            },
+                            "op": {
+                              "type": "object"
+                            }
+                          },
+                          "required": ["index", "op", "message"],
+                          "type": "object"
+                        }
+                      ]
+                    }
+                  },
+                  "required": ["detail"],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Patch execution error"
+          }
+        },
+        "summary": "Patch apprentice (generic P ops)",
+        "tags": ["apprentices"]
+      }
+    }
+  }
+}

@@ -1,0 +1,69 @@
+---
+# Purpose: Non-Python lint/security/docs checks via Super-Linter.
+# Python lint/type/test checks run in .github/workflows/python-app.yml.
+name: lint
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+permissions: read-all
+
+jobs:
+  super-linter:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: read
+      statuses: write
+    steps:
+      - name: 🔒 harden runner
+        uses: step-security/harden-runner@fa2e9d605c4eeb9fcad4c99c224cee0c6c7f3594 # v2.16.0
+        with:
+          egress-policy: audit
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: 🧹 run superlinter
+        uses: super-linter/super-linter@61abc07d755095a68f4987d1c2c3d1d64408f1f9 # v8.5.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          LINTER_RULES_PATH: ".github/linters"
+          CHECKOV_FILE_NAME: ".checkov.yaml"
+          JSCPD_CONFIG_FILE: ".jscpd.json"
+          MARKDOWN_CONFIG_FILE: ".markdownlint.yml"
+          OPENAPI_FILE_NAME: ".openapirc.yml"
+          YAML_CONFIG_FILE: ".yamllint.yml"
+          PRETTIER_COMMAND_OPTIONS:
+            "--config /github/workspace/.github/linters/.prettierrc.json"
+
+          # Security and workflow hardening.
+          VALIDATE_CHECKOV: true # policy/security checks for repo config and API specs
+          VALIDATE_GITHUB_ACTIONS: true # workflow syntax/expression validation
+          VALIDATE_GITHUB_ACTIONS_ZIZMOR: true # GitHub Actions security audits
+          VALIDATE_GITLEAKS: true # secrets detection
+          VALIDATE_GIT_MERGE_CONFLICT_MARKERS: true # blocks unresolved merge markers
+
+          # Duplicate logic detection.
+          VALIDATE_JSCPD: true # catches duplicated Python blocks (see .jscpd.json)
+
+          # API/schema and structured data quality.
+          VALIDATE_OPENAPI: true # validates OpenAPI snapshots in integration tests
+          VALIDATE_JSON: true # JSON correctness for snapshots and config files
+          VALIDATE_JSON_PRETTIER: true # JSON formatting consistency
+
+          # Documentation and language quality.
+          VALIDATE_MARKDOWN: true # markdownlint for docs and templates
+          VALIDATE_MARKDOWN_PRETTIER: true # markdown formatting consistency
+          VALIDATE_NATURAL_LANGUAGE: true # terminology/style checks in docs
+          VALIDATE_SPELL_CODESPELL: true # typo detection in code/docs/comments
+
+          # YAML hygiene for workflows, templates, and repo config.
+          VALIDATE_YAML: true # yamllint rules
+          VALIDATE_YAML_PRETTIER: true # YAML formatting consistency
+
+          VALIDATE_ALL_CODEBASE: false
+          MULTI_STATUS: false

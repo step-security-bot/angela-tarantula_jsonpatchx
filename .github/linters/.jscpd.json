@@ -1,0 +1,7 @@
+{
+  "threshold": 5,
+  "minLines": 20,
+  "minTokens": 120,
+  "format": ["python"],
+  "gitignore": true
+}

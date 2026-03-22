@@ -1,0 +1,52 @@
+---
+# Purpose: Weekly ClusterFuzzLite coverage run to maintain code-change baselines.
+name: clusterfuzzlite coverage
+
+on:
+  schedule:
+    - cron: "0 2 * * 0"
+  workflow_dispatch:
+
+permissions: read-all
+
+jobs:
+  fuzz-coverage:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      security-events: write
+    steps:
+      - name: 🔒 harden runner
+        uses: step-security/harden-runner@fa2e9d605c4eeb9fcad4c99c224cee0c6c7f3594 # v2.16.0
+        with:
+          egress-policy: audit
+
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
+
+      - name: Build fuzzers (coverage)
+        uses: google/clusterfuzzlite/actions/build_fuzzers@884713a6c30a92e5e8544c39945cd7cb630abcd1 # v1
+        with:
+          language: python
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          sanitizer: coverage
+          keep-unaffected-fuzz-targets: true
+          storage-repo:
+            https://${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository
+            }}.git
+          storage-repo-branch: gh-pages
+          storage-repo-branch-coverage: gh-pages
+
+      - name: Run fuzzers (coverage)
+        uses: google/clusterfuzzlite/actions/run_fuzzers@884713a6c30a92e5e8544c39945cd7cb630abcd1 # v1
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          language: python
+          sanitizer: coverage
+          mode: coverage
+          storage-repo:
+            https://${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository
+            }}.git
+          storage-repo-branch: gh-pages
+          storage-repo-branch-coverage: gh-pages

@@ -1,0 +1,107 @@
+[project]
+name = "jsonpatchx"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "jsonpointer>=3.0.0",
+    "pydantic>=2.12.5",
+    "typing-extensions>=4.15.0",
+]
+
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+include = ["jsonpatchx*"]
+
+[project.optional-dependencies]
+fastapi = [
+    "fastapi>=0.128.0",
+]
+
+[dependency-groups]
+dev = [
+    "fastapi>=0.128.0",
+    "httpx>=0.28.1",
+    "mypy>=1.19.1",
+    "pytest>=9.0.1",
+    "pytest-cov>=7.0.0",
+    "python-jsonpath>=2.0.2",
+    "ruff>=0.15.6",
+    "uvicorn>=0.40.0",
+]
+fuzz = [
+    "atheris>=3.0.0; python_version >= '3.11' and python_version < '3.14'",
+    "pyinstaller>=6.10.0",
+]
+
+[tool.mypy]
+plugins = ["pydantic.mypy"]
+python_version = "3.12"
+strict = true
+enable_incomplete_feature = ["TypeForm"]
+exclude = "temp.py|tests"
+exclude_gitignore = true
+
+warn_unused_configs = true
+warn_unused_ignores = true
+warn_redundant_casts = true
+warn_return_any = true
+
+disallow_untyped_defs = true
+disallow_incomplete_defs = true
+disallow_untyped_calls = true
+disallow_untyped_decorators = true
+
+no_implicit_optional = true
+check_untyped_defs = true
+
+enable_error_code = [
+  "type-arg",
+  "no-untyped-def",
+  "redundant-cast",
+  "redundant-self",
+  "comparison-overlap",
+  "no-untyped-call",
+  "no-any-return",
+  "no-any-unimported",
+  "unreachable",
+  "deprecated",
+  "redundant-expr",
+  "possibly-undefined",
+  "truthy-bool",
+  "truthy-iterable",
+  "ignore-without-code",
+  "unused-awaitable",
+  "unused-ignore",
+  "explicit-override",
+  "mutable-override",
+  "unimported-reveal",
+  "explicit-any",
+  "exhaustive-match",
+  "untyped-decorator",
+]
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+addopts = "--cov=jsonpatchx --cov=tests --cov-report=term-missing --cov-report=html --cov-config=pyproject.toml"
+
+[tool.coverage.run]
+branch = true
+parallel = true
+source = ["jsonpatchx", "tests"]
+omit = [
+  "*/__init__.py",
+  "*temp*.py",
+]
+
+[tool.coverage.report]
+exclude_lines = [
+  "no cov",
+  "if __name__ == .__main__.:",
+  "if TYPE_CHECKING:",
+  "case _ as unreachable:"
+]
