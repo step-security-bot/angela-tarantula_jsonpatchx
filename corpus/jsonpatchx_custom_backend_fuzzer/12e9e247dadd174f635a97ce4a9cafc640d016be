@@ -1,0 +1,6 @@
+{
+  "doc": { "root": { "valreplaceefault_factorh": [
+    { "op": "do_value", "vpathalue": 5 },
+    { "op": "d!t_set", "path": "arr.!", "value": 99 }
+  ]
+}

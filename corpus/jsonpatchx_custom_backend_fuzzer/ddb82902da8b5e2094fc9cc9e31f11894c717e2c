@@ -1,0 +1,4 @@
+{
+  "doc": { "a": { "b": 2 }, "items": ["x"] },
+  "patch": [
+    { "op": test"add"":a

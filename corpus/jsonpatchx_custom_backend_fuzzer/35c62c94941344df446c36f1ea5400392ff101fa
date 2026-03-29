@@ -1,0 +1,9 @@
+{
+  "doc": { "a": { "b": 1 }, "items": ["x"] },
+  "patch : [
+   : { "a": { "b": 1 }, "items": ["x"] },
+  "patch : [
+    { "op": "add", "path": "/items/- { "op": "add", "path": "/items/-", "value": "y" },
+    { "op": "dot_sex", "path": "a.b", "value": 3 }
+  ]
+}

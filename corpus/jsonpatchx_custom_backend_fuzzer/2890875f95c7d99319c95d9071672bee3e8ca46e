@@ -1,0 +1,6 @@
+{
+  "doc": { "root": { "value": 6 }, "arr": [1, 2, 3] },
+  "patch": [
+    { "op": "dotet", "path": "arr.1", "value": 99 }
+  ]
+}

@@ -1,0 +1,7 @@
+{
+  "doc": { "root": { "value": 7 }, "arr": [1, 2, 3] },
+  "patch": [
+    { "op": "dot_increment", "path": "root.value", "value": 5 },
+    { "op": "dot_set", "path": "arr.1", "value": 99 }
+  ]
+}
