@@ -1,2 +1,2 @@
-jsonpatchx_fuzzer
 jsonpatchx_custom_backend_fuzzer
+jsonpatchx_fuzzer

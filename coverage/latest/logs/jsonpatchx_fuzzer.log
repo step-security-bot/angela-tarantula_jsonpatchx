@@ -3,4 +3,4 @@ ERROR: ld.so: object '/github/workspace/build-out/sanitizer_with_fuzzer.so' from
 Traceback (most recent call last):
   File "jsonpatchx_fuzzer.py", line 3, in <module>
 ModuleNotFoundError: No module named 'coverage'
-[PYI-105:ERROR] Failed to execute script 'jsonpatchx_fuzzer' due to unhandled exception!
+[PYI-118:ERROR] Failed to execute script 'jsonpatchx_fuzzer' due to unhandled exception!
