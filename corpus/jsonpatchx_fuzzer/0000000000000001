@@ -1,0 +1,4 @@
+[
+  { "op": "noop", "path": "/x" },
+  { "op": "remove", "path": "/-" }
+]

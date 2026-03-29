@@ -1,0 +1,6 @@
+{
+   "patch":  [   
+{ "op": "replace", "path": "/root/value", "value": 2 },
+    { "op": "add", "path": "/a-", "value": 3 }
+  ]
+}

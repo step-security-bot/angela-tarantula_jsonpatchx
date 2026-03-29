@@ -1,0 +1,6 @@
+{
+  "doc": { "": { "value": 1 }, "arr": [0, 0, 2], "enabled": true },
+  "patch": [
+   { "op": "replace", "path": "/arr/-", "value": 3 }
+  ]
+}

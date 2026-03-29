@@ -1,0 +1,6 @@
+{
+  "doc": { "movled": true },
+  "patch": [
+    { "op": "replace", "path": "o/or/tval}e", "e": 3 }
+  ]
+}
